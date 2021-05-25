@@ -1,0 +1,36 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "centralindia"
+        },
+        "name": {
+            "value": "p2sgateway"
+        },
+        "sku": {
+            "value": "VpnGw1"
+        },
+        "gatewayType": {
+            "value": "Vpn"
+        },
+        "vpnType": {
+            "value": "RouteBased"
+        },
+        "vpnGatewayGeneration": {
+            "value": "Generation1"
+        },
+        "subnetId": {
+            "value": "/subscriptions/83343ae6-3277-475f-8be1-946e5d6d9359/resourceGroups/Az360-SharedSvcs-rg/providers/Microsoft.Network/virtualNetworks/hub-vnet/subnets/GatewaySubnet"
+        },
+        "newPublicIpAddressName": {
+            "value": "pip-vgw-dev"
+        },
+        "enableBgp": {
+            "value": true
+        },
+        "asn": {
+            "value": 65515
+        }
+    }
+}

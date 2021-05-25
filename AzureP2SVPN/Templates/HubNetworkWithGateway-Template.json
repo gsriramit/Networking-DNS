@@ -1,0 +1,170 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string"
+        },
+        "virtualNetworkName": {
+            "type": "string"
+        },
+        "resourceGroup": {
+            "type": "string"
+        },
+        "addressSpaces": {
+            "type": "array"
+        },
+        "ipv6Enabled": {
+            "type": "bool"
+        },
+        "subnetCount": {
+            "type": "int"
+        },
+        "subnet0_name": {
+            "type": "string"
+        },
+        "subnet0_addressRange": {
+            "type": "string"
+        },
+        "subnet1_name": {
+            "type": "string"
+        },
+        "subnet1_addressRange": {
+            "type": "string"
+        },
+        "ddosProtectionPlanEnabled": {
+            "type": "bool"
+        },
+        "firewallEnabled": {
+            "type": "bool"
+        },
+        "bastionEnabled": {
+            "type": "bool"
+        },
+        "gatewayName": {
+            "type": "string"
+        },
+        "gatewaylocation": {
+            "type": "string"
+        },
+        "gatewaysku": {
+            "type": "string"
+        },
+        "gatewayType": {
+            "type": "string",
+            "defaultValue": "Vpn",
+            "allowedValues": [
+                "Vpn",
+                "ExpressRoute"
+            ]
+        },
+        "vpnGatewayGeneration": {
+            "type": "string"
+        },
+        "vpnType": {
+            "type": "string",
+            "defaultValue": "RouteBased",
+            "allowedValues": [
+                "RouteBased",
+                "PolicyBased"
+            ]
+        },
+        "gatewaySubnetId": {
+            "type": "string"
+        },
+        "gatewayPublicIpAddressName": {
+            "type": "string"
+        },
+        "enableBgp": {
+            "type": "bool"
+        },
+        "asn": {
+            "type": "int"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "name": "[parameters('virtualNetworkName')]",
+            "type": "Microsoft.Network/VirtualNetworks",
+            "apiVersion": "2020-06-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "tags": {
+                "P2Stesting": "HubVnet",
+                "CostCenter": "dev"
+            },
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.0.0.0/16"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "GatewaySubnet",
+                        "properties": {
+                            "addressPrefix": "10.0.2.0/27"
+                        }
+                    },
+                    {
+                        "name": "MgmtSubnet",
+                        "properties": {
+                            "addressPrefix": "10.0.5.0/24"
+                        }
+                    }
+                ],
+                "enableDdosProtection": "[parameters('ddosProtectionPlanEnabled')]"
+            }
+        },
+        {
+            "apiVersion": "2020-08-01",
+            "name": "[parameters('gatewayName')]",
+            "type": "Microsoft.Network/virtualNetworkGateways",
+            "location": "[parameters('gatewaylocation')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIPAddresses/', parameters('gatewayPublicIpAddressName'))]"
+            ],
+            "tags": {
+                "P2Stesting": "vpngateway",
+                "CostCenter": "dev"
+            },
+            "properties": {
+                "gatewayType": "[parameters('gatewayType')]",
+                "ipConfigurations": [
+                    {
+                        "name": "default",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[parameters('gatewaySubnetId')]"
+                            },
+                            "publicIpAddress": {
+                                "id": "[resourceId('Az360-SharedSvcs-rg', 'Microsoft.Network/publicIPAddresses', parameters('gatewayPublicIpAddressName'))]"
+                            }
+                        }
+                    }
+                ],
+                "enableBgp": "[parameters('enableBgp')]",
+                "bgpSettings": {
+                    "asn": "[parameters('asn')]"
+                },
+                "vpnType": "[parameters('vpnType')]",
+                "vpnGatewayGeneration": "[parameters('vpnGatewayGeneration')]",
+                "sku": {
+                    "name": "[parameters('gatewaysku')]",
+                    "tier": "[parameters('gatewaysku')]"
+                }
+            }
+        },
+        {
+            "apiVersion": "2019-02-01",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[parameters('gatewayPublicIpAddressName')]",
+            "location": "[parameters('gatewaylocation')]",
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic"
+            }
+        }
+    ]
+}

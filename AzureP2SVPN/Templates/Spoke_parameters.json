@@ -1,0 +1,50 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "centralindia"
+        },
+        "virtualNetworkName": {
+            "value": "spoke-vnet"
+        },
+        "resourceGroup": {
+            "value": "Az360-SharedSvcs-rg"
+        },
+        "addressSpaces": {
+            "value": [
+                "10.1.0.0/16"
+            ]
+        },
+        "ipv6Enabled": {
+            "value": false
+        },
+        "subnetCount": {
+            "value": 1
+        },
+        "subnet0_name": {
+            "value": "workloadsubnet"
+        },
+        "subnet0_addressRange": {
+            "value": "10.1.0.0/24"
+        },
+        "ddosProtectionPlanEnabled": {
+            "value": false
+        },
+        "firewallEnabled": {
+            "value": false
+        },
+        "bastionEnabled": {
+            "value": true
+        },
+        "bastionName": {
+            "value": "rdp-bastionhost-vm"
+        },
+        "bastionSubnetAddressSpace": {
+            "value": "10.1.3.0/25"
+        },
+        "publicIpAddressForBastion": {
+            "value": "pip-bastion-vm1"
+        }
+    }
+}
