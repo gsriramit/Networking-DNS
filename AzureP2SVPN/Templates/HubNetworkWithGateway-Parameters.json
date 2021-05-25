@@ -7,10 +7,7 @@
         },
         "virtualNetworkName": {
             "value": "hub-vnet"
-        },
-        "resourceGroup": {
-            "value": "Az360-SharedSvcs-rg"
-        },
+        },      
         "addressSpaces": {
             "value": [
                 "10.0.0.0/16"
@@ -60,10 +57,7 @@
         },
         "vpnGatewayGeneration": {
             "value": "Generation1"
-        },
-        "gatewaysubnetId": {
-            "value": "[concat(resourcegroup().id, '/providers/Microsoft.Network/virtualNetworks/hub-vnet/subnets/GatewaySubnet')]"            
-        },
+        },       
         "gatewayPublicIpAddressName": {
             "value": "pip-vgw-dev"
         },

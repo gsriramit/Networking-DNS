@@ -9,7 +9,7 @@
             "value": "spoke-vnet"
         },
         "resourceGroup": {
-            "value": "Az360-SharedSvcs-rg"
+            "value": ""
         },
         "addressSpaces": {
             "value": [

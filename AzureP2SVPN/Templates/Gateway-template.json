@@ -67,7 +67,7 @@
                                 "id": "[parameters('subnetId')]"
                             },
                             "publicIpAddress": {
-                                "id": "[resourceId('Az360-SharedSvcs-rg', 'Microsoft.Network/publicIPAddresses', parameters('newPublicIpAddressName'))]"
+                                "id": "[resourceId(resourcegroup().name, 'Microsoft.Network/publicIPAddresses', parameters('newPublicIpAddressName'))]"
                             }
                         }
                     }

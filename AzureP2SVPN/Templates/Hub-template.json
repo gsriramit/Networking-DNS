@@ -9,7 +9,8 @@
             "type": "string"
         },
         "resourceGroup": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]"
         },
         "addressSpaces": {
             "type": "array"

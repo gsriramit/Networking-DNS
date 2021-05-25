@@ -5,12 +5,13 @@
         "location": {
             "type": "string"
         },
+        "resourceGroup": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]"
+        },
         "virtualNetworkName": {
             "type": "string"
-        },
-        "resourceGroup": {
-            "type": "string"
-        },
+        },       
         "addressSpaces": {
             "type": "array"
         },
@@ -70,7 +71,8 @@
             ]
         },
         "gatewaySubnetId": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "[concat(resourcegroup().id, '/providers/Microsoft.Network/virtualNetworks/hub-vnet/subnets/GatewaySubnet')]"
         },
         "gatewayPublicIpAddressName": {
             "type": "string"
@@ -140,7 +142,7 @@
                                 "id": "[parameters('gatewaySubnetId')]"
                             },
                             "publicIpAddress": {
-                                "id": "[resourceId('Az360-SharedSvcs-rg', 'Microsoft.Network/publicIPAddresses', parameters('gatewayPublicIpAddressName'))]"
+                                "id": "[resourceId(resourcegroup().name, 'Microsoft.Network/publicIPAddresses', parameters('gatewayPublicIpAddressName'))]"
                             }
                         }
                     }
