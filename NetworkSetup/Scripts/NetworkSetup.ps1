@@ -14,8 +14,8 @@ Set-AzContext -Tenant $tenantId -Subscription $subscriptionId
 #   create VNET peering
 #   create the private DNS zones for each and setup for auto-registration 
 $resourceGroupName = 'Az360-SharedSvcs-rg'
-$hubNetworkTemplate = '.\'
-$hubNetworkParamters = '.\Hub&SpokeNetworks-Parameters.json'
+$hubNetworkTemplate = 'Hub&SpokeNetworks-Template.json'
+$hubNetworkParamters = 'Hub&SpokeNetworks-Parameters.json'
 
 
 New-AzResourceGroupDeployment -Name HubNSpokeNetworkDeployment -ResourceGroupName $resourceGroupName `

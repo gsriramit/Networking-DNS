@@ -1,5 +1,5 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "location": {
@@ -14,13 +14,7 @@
         },
         "hubAddressSpaces": {
             "type": "array"
-        },
-        "ipv6Enabled": {
-            "type": "bool"
-        },
-        "hubSubnetCount": {
-            "type": "int"
-        },
+        }, 
         "hub_subnet0_name": {
             "type": "string"
         },
@@ -64,17 +58,10 @@
           },
           "spokeNetworkName": {
             "type": "string"
-        },
-        "resourceGroup": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().name]"
-        },
-        "spoke_addressSpaces": {
+        },   
+        "spokeAddressSpaces": {
             "type": "array"
-        },
-        "ipv6Enabled": {
-            "type": "bool"
-        },
+        }, 
         "spokeSubnetCount": {
             "type": "int"
         },
@@ -94,6 +81,9 @@
             "type": "bool"
         },
         "spoke_bastionName": {
+            "type": "string"
+        },
+        "spoke_bastionSubnetName": {
             "type": "string"
         },
         "spoke_bastionSubnetAddressSpace": {
@@ -132,25 +122,26 @@
             "name": "[parameters('hubNetworkName')]",
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2020-05-01",
-            "location": "[parameters('location')]",
-            "dependsOn": [],
+            "location": "[parameters('location')]",            
             "tags": {
                 "DNSTesting": "HubVnet",
                 "CostCenter": "dev"
             },
             "properties": {
                 "addressSpace": {
-                    "addressPrefixes": "[parameters('hubAddressSpaces')]"
+                    "addressPrefixes": [
+                            "10.0.0.0/16"
+                        ]
                 },
                 "subnets": [
                     {
-                        "name": "[parameters('hub_subnet0_name']",
+                        "name": "[parameters('hub_subnet0_name')]",
                         "properties": {
                             "addressPrefix": "[parameters('hub_subnet0_addressRange')]"
                         }
                     },
                     {
-                        "name": "[parameters('hub_subnet1_name']",
+                        "name": "[parameters('hub_subnet1_name')]",
                         "properties": {
                             "addressPrefix": "[parameters('hub_subnet1_addressRange')]"
                         }
@@ -198,7 +189,7 @@
               "[resourceId('Microsoft.Network/virtualNetworks', parameters('hubNetworkName'))]"
             ],
             "properties": {
-              "registrationEnabled": "[parameters('vmRegistration')]",
+              "registrationEnabled": "[parameters('hub_vmRegistration')]",
               "virtualNetwork": {
                 "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('hubNetworkName'))]"
               }
@@ -209,14 +200,15 @@
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2020-05-01",
             "location": "[parameters('location')]",
-            "dependsOn": [],
             "tags": {
                 "DNSStesting": "spoke vnet",
                 "CostCenter": "dev"
             },
             "properties": {
                 "addressSpace": {
-                    "addressPrefixes": "[parameters('spokeAddressSpaces')]"
+                    "addressPrefixes": [
+                        "10.1.0.0/16"
+                    ]
                 },
                 "subnets": [
                     {
@@ -249,7 +241,7 @@
                         "allowVirtualNetworkAccess": true,
                         "allowForwardedTraffic": true,
                         "allowGatewayTransit": false,
-                        "useRemoteGateways": true,
+                        "useRemoteGateways": false,
                         "remoteVirtualNetwork": {
                             "id": "[resourceId('Microsoft.Network/virtualNetworks',parameters('HubVnetName'))]"
                         }
