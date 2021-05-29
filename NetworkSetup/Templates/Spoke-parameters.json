@@ -5,13 +5,13 @@
         "location": {
             "value": "centralindia"
         },
-        "virtualNetworkName": {
+        "spokeNetworkName": {
             "value": "spoke-vnet"
         },
         "resourceGroup": {
             "value": ""
         },
-        "addressSpaces": {
+        "spokeAddressSpaces": {
             "value": [
                 "10.1.0.0/16"
             ]
@@ -19,31 +19,34 @@
         "ipv6Enabled": {
             "value": false
         },
-        "subnetCount": {
+        "spokeSubnetCount": {
             "value": 1
         },
-        "subnet0_name": {
+        "spoke_subnet0_name": {
             "value": "workloadsubnet"
         },
-        "subnet0_addressRange": {
+        "spoke_subnet0_addressRange": {
             "value": "10.1.0.0/24"
         },
-        "ddosProtectionPlanEnabled": {
-            "value": false
+        "spoke_bastionSubnetName": {
+            "value": "AzureBastionSubnet"
         },
-        "firewallEnabled": {
-            "value": false
-        },
-        "bastionEnabled": {
-            "value": true
-        },
-        "bastionName": {
-            "value": "rdp-bastionhost-vm"
-        },
-        "bastionSubnetAddressSpace": {
+        "spoke_bastionSubnetAddressSpace": {
             "value": "10.1.3.0/25"
         },
-        "publicIpAddressForBastion": {
+        "spoke_ddosProtectionPlanEnabled": {
+            "value": false
+        },
+        "spoke_firewallEnabled": {
+            "value": false
+        },
+        "spoke_bastionEnabled": {
+            "value": true
+        },
+        "spoke_bastionName": {
+            "value": "rdp-bastionhost-vm"
+        },      
+        "spoke_publicIpAddressForBastion": {
             "value": "pip-bastion-vm1"
         },
         "HubVnetName": {

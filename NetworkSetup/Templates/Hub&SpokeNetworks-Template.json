@@ -5,7 +5,64 @@
         "location": {
             "type": "string"
         },
-        "spokeNetworkName": {
+        "hubNetworkName": {
+            "type": "string"
+        },
+        "resourceGroup": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]"
+        },
+        "hubAddressSpaces": {
+            "type": "array"
+        },
+        "ipv6Enabled": {
+            "type": "bool"
+        },
+        "hubSubnetCount": {
+            "type": "int"
+        },
+        "hub_subnet0_name": {
+            "type": "string"
+        },
+        "hub_subnet0_addressRange": {
+            "type": "string"
+        },
+        "hub_subnet1_name": {
+            "type": "string"
+        },
+        "hub_subnet1_addressRange": {
+            "type": "string"
+        },
+        "hub_ddosProtectionPlanEnabled": {
+            "type": "bool"
+        },
+        "hub_firewallEnabled": {
+            "type": "bool"
+        },
+        "hub_bastionEnabled": {
+            "type": "bool"
+        },
+        "spokeVnet-1-Name": {
+            "type": "string",
+            "metadata": {
+                "description": "Name for vNet 2"
+            }
+        },
+        "hub_privateDNSZoneName": {
+            "type": "string",
+            "defaultValue": "az-hubinternal.net",
+            "metadata": {
+              "description": "Private DNS zone name"
+            }
+          },
+          "hub_vmRegistration": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+              "description": "Enable automatic VM DNS registration in the zone"
+            }
+          },
+          "spokeNetworkName": {
             "type": "string"
         },
         "resourceGroup": {
@@ -64,12 +121,89 @@
             "metadata": {
               "description": "Enable automatic VM DNS registration in the zone"
             }
-          }
+        }
     },
     "variables": {
+        "HubtoSpoke1PeeringName": "HubToSpoke1Peering",
         "Spoke1ToHubPeeringName": "Spoke1ToHubPeering"
     },
     "resources": [
+        {
+            "name": "[parameters('hubNetworkName')]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2020-05-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "tags": {
+                "DNSTesting": "HubVnet",
+                "CostCenter": "dev"
+            },
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": "[parameters('hubAddressSpaces')]"
+                },
+                "subnets": [
+                    {
+                        "name": "[parameters('hub_subnet0_name']",
+                        "properties": {
+                            "addressPrefix": "[parameters('hub_subnet0_addressRange')]"
+                        }
+                    },
+                    {
+                        "name": "[parameters('hub_subnet1_name']",
+                        "properties": {
+                            "addressPrefix": "[parameters('hub_subnet1_addressRange')]"
+                        }
+                    }
+                ],
+                "enableDdosProtection": "[parameters('hub_ddosProtectionPlanEnabled')]"
+            },
+            "resources": [
+                {
+                    "apiVersion": "2020-05-01",
+                    "type": "virtualNetworkPeerings",
+                    "name": "[variables('HubToSpoke1PeeringName')]",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Network/virtualNetworks/', parameters('hubNetworkName'))]",
+                        "[resourceId('Microsoft.Network/virtualNetworks/', parameters('spokeVnet-1-Name'))]"
+                    ],
+                    "comments": "This is the peering from the Hub Vnet to the first spoke Vnet",
+                    "properties": {
+                        "allowVirtualNetworkAccess": true,
+                        "allowForwardedTraffic": true,
+                        "allowGatewayTransit": true,
+                        "useRemoteGateways": false,
+                        "remoteVirtualNetwork": {
+                            "id": "[resourceId('Microsoft.Network/virtualNetworks',parameters('spokeVnet-1-Name'))]"
+                        }
+                    }
+                }               
+            ]
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones",
+            "apiVersion": "2020-01-01",
+            "name": "[parameters('hub_privateDNSZoneName')]",
+            "properties":{},
+            "location": "global"
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+            "apiVersion": "2020-01-01",
+            "name": "[concat(parameters('hub_privateDNSZoneName'), '/', parameters('hub_privateDNSZoneName'), '-link')]",
+            "location": "global",
+            "dependsOn": [
+              "[resourceId('Microsoft.Network/privateDnsZones', parameters('hub_privateDNSZoneName'))]",
+              "[resourceId('Microsoft.Network/virtualNetworks', parameters('hubNetworkName'))]"
+            ],
+            "properties": {
+              "registrationEnabled": "[parameters('vmRegistration')]",
+              "virtualNetwork": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('hubNetworkName'))]"
+              }
+            }
+        },
         {
             "name": "[parameters('spokeNetworkName')]",
             "type": "Microsoft.Network/virtualNetworks",

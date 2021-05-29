@@ -45,6 +45,47 @@
         },
         "spokeVnet-1-Name":{
             "value":"spoke-vnet"
+        },
+        "spokeNetworkName": {
+            "value": "spoke-vnet"
+        },
+        "spokeAddressSpaces": {
+            "value": [
+                "10.1.0.0/16"
+            ]
+        },
+        "spokeSubnetCount": {
+            "value": 1
+        },
+        "spoke_subnet0_name": {
+            "value": "workloadsubnet"
+        },
+        "spoke_subnet0_addressRange": {
+            "value": "10.1.0.0/24"
+        },
+        "spoke_bastionSubnetName": {
+            "value": "AzureBastionSubnet"
+        },
+        "spoke_bastionSubnetAddressSpace": {
+            "value": "10.1.3.0/25"
+        },
+        "spoke_ddosProtectionPlanEnabled": {
+            "value": false
+        },
+        "spoke_firewallEnabled": {
+            "value": false
+        },
+        "spoke_bastionEnabled": {
+            "value": true
+        },
+        "spoke_bastionName": {
+            "value": "rdp-bastionhost-vm"
+        },      
+        "spoke_publicIpAddressForBastion": {
+            "value": "pip-bastion-vm1"
+        },
+        "HubVnetName": {
+            "value":"hub-vnet"        
         }
     }
 }
