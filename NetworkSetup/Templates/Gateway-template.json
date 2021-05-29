@@ -31,7 +31,8 @@
             ]
         },
         "subnetId": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "[concat(resourcegroup().id, '/providers/Microsoft.Network/virtualNetworks/hub-vnet/subnets/GatewaySubnet')]"
         },
         "newPublicIpAddressName": {
             "type": "string"

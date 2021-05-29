@@ -45,6 +45,9 @@
         },
         "publicIpAddressForBastion": {
             "value": "pip-bastion-vm1"
+        },
+        "HubVnetName": {
+            "value":"hub-vnet"        
         }
     }
 }

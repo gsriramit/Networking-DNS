@@ -22,10 +22,7 @@
         },
         "vpnGatewayGeneration": {
             "value": "Generation1"
-        },
-        "subnetId": {
-            "value": "[concat(resourcegroup().id, '/providers/Microsoft.Network/virtualNetworks/hub-vnet/subnets/GatewaySubnet')]"
-        },
+        },       
         "newPublicIpAddressName": {
             "value": "pip-vgw-dev"
         },

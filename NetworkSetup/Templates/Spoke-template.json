@@ -44,14 +44,36 @@
         },
         "publicIpAddressForBastion": {
             "type": "string"
-        }
+        },
+        "HubVnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Hub Vnet"
+            }
+        },
+        "privateDnsZoneName": {
+            "type": "string",
+            "defaultValue": "az-spoke1-internal.net",
+            "metadata": {
+              "description": "Private DNS zone name"
+            }
+          },
+          "vmRegistration": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+              "description": "Enable automatic VM DNS registration in the zone"
+            }
+          }
     },
-    "variables": {},
+    "variables": {
+        "Spoke1ToHubPeeringName": "Spoke1ToHubPeering"
+    },
     "resources": [
         {
             "name": "[parameters('virtualNetworkName')]",
-            "type": "Microsoft.Network/VirtualNetworks",
-            "apiVersion": "2020-06-01",
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2020-05-01",
             "location": "[parameters('location')]",
             "dependsOn": [],
             "tags": {
@@ -79,10 +101,32 @@
                     }
                 ],
                 "enableDdosProtection": "[parameters('ddosProtectionPlanEnabled')]"
-            }
+            },
+            "resources": [
+                {
+                    "apiVersion": "2020-05-01",
+                    "type": "virtualNetworkPeerings",
+                    "name": "[variables('Spoke1ToHubPeeringName')]",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]",
+                        "[resourceId('Microsoft.Network/virtualNetworks/', parameters('HubVnetName'))]"
+                    ],
+                    "comments": "This is the peering from the Spoke Vnet to the Hub VNet ",
+                    "properties": {
+                        "allowVirtualNetworkAccess": true,
+                        "allowForwardedTraffic": true,
+                        "allowGatewayTransit": false,
+                        "useRemoteGateways": true,
+                        "remoteVirtualNetwork": {
+                            "id": "[resourceId('Microsoft.Network/virtualNetworks',parameters('HubVnetName'))]"
+                        }
+                    }
+                }
+            ]
         },
         {
-            "type": "Microsoft.Network/publicIpAddresses",
+            "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2020-08-01",
             "name": "[parameters('publicIpAddressForBastion')]",
             "location": "[parameters('location')]",
@@ -116,6 +160,29 @@
                         }
                     }
                 ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones",
+            "apiVersion": "2020-01-01",
+            "name": "[parameters('privateDnsZoneName')]",
+            "properties":{},
+            "location": "global"
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+            "apiVersion": "2020-01-01",
+            "name": "[concat(parameters('privateDnsZoneName'), '/', parameters('privateDnsZoneName'), '-link')]",
+            "location": "global",
+            "dependsOn": [
+              "[resourceId('Microsoft.Network/privateDnsZones', parameters('privateDnsZoneName'))]",
+              "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]"
+            ],
+            "properties": {
+              "registrationEnabled": "[parameters('vmRegistration')]",
+              "virtualNetwork": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]"
+              }
             }
         }
     ]

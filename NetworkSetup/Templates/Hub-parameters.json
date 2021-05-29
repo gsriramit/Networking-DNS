@@ -9,7 +9,7 @@
             "value": "hub-vnet"
         },
         "resourceGroup": {
-            "value": "Az360-SharedSvcs-rg"
+            "value": ""
         },
         "addressSpaces": {
             "value": [
@@ -42,6 +42,9 @@
         },
         "bastionEnabled": {
             "value": false
+        },
+        "spokeVnet-1-Name":{
+            "value":"spoke-vnet"
         }
     }
 }
