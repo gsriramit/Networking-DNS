@@ -1,3 +1,5 @@
+
+#Optional Step - Install the Az Module if migrating from AzureRM to Az
 Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force -AllowClobber 
 #Connect to the Azure Account
 Connect-AzAccount
@@ -10,15 +12,17 @@ Set-AzContext -Tenant $tenantId -Subscription $subscriptionId
 
 #Deploy the Hub & Spoke VNets
 #Note: The template will
-#    create the networks, 
+#    create the networks, subnets and the NSGs required for the Custom DNS Servers
 #   create VNET peering
 #   create the private DNS zones for each and setup for auto-registration 
-$resourceGroupName = 'Az360-SharedSvcs-rg'
+$resourceGroupName = ''
 $hubNetworkTemplate = 'Hub&SpokeNetworks-Template.json'
 $hubNetworkParamters = 'Hub&SpokeNetworks-Parameters.json'
 
-
-New-AzResourceGroupDeployment -Name HubNSpokeNetworkDeployment -ResourceGroupName $resourceGroupName `
+# Remove the WhatIf switch after verifying the correctness of the template
+New-AzResourceGroupDeployment -Name HubNSpokeNetworkDeployment  `
+-WhatIf `
+-ResourceGroupName $resourceGroupName `
   -TemplateFile $hubNetworkTemplate `
   -TemplateParameterFile $hubNetworkParamters
 

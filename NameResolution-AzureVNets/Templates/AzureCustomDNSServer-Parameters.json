@@ -1,0 +1,72 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "centralindia"
+        },
+        "networkInterfaceName": {
+            "value": "vm-customdns-dev-001713"
+        },
+        "networkSecurityGroupId": {
+            "value": null
+        },
+        "subnetName": {
+            "value": "MgmtSubnet"
+        },
+        "virtualNetworkId": {
+            "value": null
+        },
+        "virtualMachineName": {
+            "value": "vm-customdns-dev-001"
+        },
+        "virtualMachineComputerName": {
+            "value": "vm-customdns-de"
+        },
+        "virtualMachineRG": {
+            "value": "Az360-SharedSvcs-rg"
+        },
+        "osDiskType": {
+            "value": "StandardSSD_LRS"
+        },
+        "virtualMachineSize": {
+            "value": "Standard_DS1_v2"
+        },
+        "adminUsername": {
+            "value": "adminaccount"
+        },
+        "adminPassword": {
+            "value": null
+        },
+        "patchMode": {
+            "value": "AutomaticByOS"
+        },
+        "enableHotpatching": {
+            "value": false
+        }, 
+        "forwardDomainName":{
+            "value":"az-spoke1-internal.net"
+        },
+        "forwardServerIp":{
+            "value": "10.1.0.4"
+        },
+        "autoShutdownStatus": {
+            "value": "Enabled"
+        },
+        "autoShutdownTime": {
+            "value": "19:00"
+        },
+        "autoShutdownTimeZone": {
+            "value": "UTC"
+        },
+        "autoShutdownNotificationStatus": {
+            "value": "Enabled"
+        },
+        "autoShutdownNotificationLocale": {
+            "value": "en"
+        },
+        "autoShutdownNotificationEmail": {
+            "value": "gsriramit@gmail.com"
+        }
+    }
+}
