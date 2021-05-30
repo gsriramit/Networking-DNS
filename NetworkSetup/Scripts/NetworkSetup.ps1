@@ -19,7 +19,6 @@ $hubNetworkParamters = 'Hub&SpokeNetworks-Parameters.json'
 
 
 New-AzResourceGroupDeployment -Name HubNSpokeNetworkDeployment -ResourceGroupName $resourceGroupName `
--WhatIf `
   -TemplateFile $hubNetworkTemplate `
   -TemplateParameterFile $hubNetworkParamters
 

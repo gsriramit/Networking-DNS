@@ -63,6 +63,92 @@
         "spoke_bastionSubnetAddressSpace": {
             "value": "10.1.3.0/25"
         },
+        "hub_bastionSubnetName": {
+            "value": "AzureBastionSubnet"
+        },
+        "hub_bastionSubnetAddressSpace": {
+            "value": "10.0.3.0/25"
+        },
+        "hub_DNS_NSGName":{
+            "value":"hub_nsg_dns"
+        },
+        "spoke_DNS_NSGName":{
+            "value":"spoke_nsg_dns"
+        },
+        "hub_DNS_NSGRules":{
+            "value": [
+                {
+                    "name": "DNS",
+                    "properties": {
+                        "priority": 1010,
+                        "protocol": "*",
+                        "access": "Allow",
+                        "direction": "Inbound",
+                        "sourceApplicationSecurityGroups": [],
+                        "destinationApplicationSecurityGroups": [],
+                        "sourceAddressPrefixes": [
+                            "10.0.0.0/24",
+                             "10.1.0.0/24"
+                            ],
+                        "sourcePortRange": "*",
+                        "destinationAddressPrefix": "*",
+                        "destinationPortRange": "53"
+                    }
+                },
+                {
+                    "name": "default-allow-rdp",
+                    "properties": {
+                        "priority": 1020,
+                        "protocol": "TCP",
+                        "access": "Allow",
+                        "direction": "Inbound",
+                        "sourceApplicationSecurityGroups": [],
+                        "destinationApplicationSecurityGroups": [],
+                        "sourceAddressPrefix": "10.0.3.0/25",
+                        "sourcePortRange": "*",
+                        "destinationAddressPrefix": "10.0.0.0/24",
+                        "destinationPortRange": "3389"
+                    }
+                }
+            ]
+        },
+        "spoke_DNS_NSGRules":{
+            "value": [
+                {
+                    "name": "DNS",
+                    "properties": {
+                        "priority": 1010,
+                        "protocol": "*",
+                        "access": "Allow",
+                        "direction": "Inbound",
+                        "sourceApplicationSecurityGroups": [],
+                        "destinationApplicationSecurityGroups": [],
+                        "sourceAddressPrefixes": [
+                            "10.0.0.0/24", 
+                            "10.1.0.0/24"
+                        ],
+                        "sourcePortRange": "*",
+                        "destinationAddressPrefix": "*",
+                        "destinationPortRange": "53"
+                    }
+                },
+                {
+                    "name": "default-allow-rdp",
+                    "properties": {
+                        "priority": 1020,
+                        "protocol": "TCP",
+                        "access": "Allow",
+                        "direction": "Inbound",
+                        "sourceApplicationSecurityGroups": [],
+                        "destinationApplicationSecurityGroups": [],
+                        "sourceAddressPrefix": "10.1.3.0/25",
+                        "sourcePortRange": "*",
+                        "destinationAddressPrefix": "10.1.0.0/24",
+                        "destinationPortRange": "3389"
+                    }
+                }
+            ]
+        },
         "spoke_ddosProtectionPlanEnabled": {
             "value": false
         },
@@ -77,6 +163,12 @@
         },      
         "spoke_publicIpAddressForBastion": {
             "value": "pip-bastion-vm1"
+        },
+        "hub_bastionName": {
+            "value": "rdp-bastionhost-vm0"
+        },      
+        "hub_publicIpAddressForBastion": {
+            "value": "pip-bastion-vm0"
         },
         "HubVnetName": {
             "value":"hub-vnet"        

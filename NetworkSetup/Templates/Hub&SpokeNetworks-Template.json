@@ -14,7 +14,7 @@
         },
         "hubAddressSpaces": {
             "type": "array"
-        }, 
+        },
         "hub_subnet0_name": {
             "type": "string"
         },
@@ -36,6 +36,18 @@
         "hub_bastionEnabled": {
             "type": "bool"
         },
+        "hub_DNS_NSGName": {
+            "type": "string"
+        },
+        "hub_DNS_NSGRules": {
+            "type": "array"
+        },
+        "spoke_DNS_NSGRules": {
+            "type": "array"
+        },
+        "spoke_DNS_NSGName": {
+            "type": "string"
+        },
         "spokeVnet-1-Name": {
             "type": "string",
             "metadata": {
@@ -46,22 +58,34 @@
             "type": "string",
             "defaultValue": "az-hubinternal.net",
             "metadata": {
-              "description": "Private DNS zone name"
+                "description": "Private DNS zone name"
             }
-          },
-          "hub_vmRegistration": {
+        },
+        "hub_vmRegistration": {
             "type": "bool",
             "defaultValue": true,
             "metadata": {
-              "description": "Enable automatic VM DNS registration in the zone"
+                "description": "Enable automatic VM DNS registration in the zone"
             }
-          },
-          "spokeNetworkName": {
+        },
+        "hub_bastionName": {
             "type": "string"
-        },   
+        },
+        "hub_publicIpAddressForBastion": {
+            "type": "string"
+        },
+        "hub_bastionSubnetName": {
+            "type": "string"
+        },
+        "hub_bastionSubnetAddressSpace": {
+            "type": "string"
+        },
+        "spokeNetworkName": {
+            "type": "string"
+        },
         "spokeAddressSpaces": {
             "type": "array"
-        }, 
+        },
         "spokeSubnetCount": {
             "type": "int"
         },
@@ -102,14 +126,14 @@
             "type": "string",
             "defaultValue": "az-spoke1-internal.net",
             "metadata": {
-              "description": "Private DNS zone name"
+                "description": "Private DNS zone name"
             }
-          },
-          "spoke_vmRegistration": {
+        },
+        "spoke_vmRegistration": {
             "type": "bool",
             "defaultValue": true,
             "metadata": {
-              "description": "Enable automatic VM DNS registration in the zone"
+                "description": "Enable automatic VM DNS registration in the zone"
             }
         }
     },
@@ -119,10 +143,19 @@
     },
     "resources": [
         {
+            "name": "[parameters('hub_DNS_NSGName')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2019-02-01",
+            "location": "[parameters('location')]",
+            "properties": {
+                "securityRules": "[parameters('hub_DNS_NSGRules')]"
+            }
+        },        
+        {
             "name": "[parameters('hubNetworkName')]",
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2020-05-01",
-            "location": "[parameters('location')]",            
+            "location": "[parameters('location')]",
             "tags": {
                 "DNSTesting": "HubVnet",
                 "CostCenter": "dev"
@@ -130,8 +163,8 @@
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
-                            "10.0.0.0/16"
-                        ]
+                        "10.0.0.0/16"
+                    ]
                 },
                 "subnets": [
                     {
@@ -143,7 +176,16 @@
                     {
                         "name": "[parameters('hub_subnet1_name')]",
                         "properties": {
-                            "addressPrefix": "[parameters('hub_subnet1_addressRange')]"
+                            "addressPrefix": "[parameters('hub_subnet1_addressRange')]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('hub_DNS_NSGName'))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "[parameters('hub_bastionSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('hub_bastionSubnetAddressSpace')]"
                         }
                     }
                 ],
@@ -169,14 +211,51 @@
                             "id": "[resourceId('Microsoft.Network/virtualNetworks',parameters('spokeVnet-1-Name'))]"
                         }
                     }
-                }               
+                }
             ]
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2020-08-01",
+            "name": "[parameters('hub_publicIpAddressForBastion')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Static"
+            }
+        },
+        {
+            "type": "Microsoft.Network/bastionHosts",
+            "apiVersion": "2019-04-01",
+            "name": "[parameters('hub_bastionName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId(parameters('resourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('hubNetworkName'))]",
+                "[resourceId(parameters('resourceGroup'), 'Microsoft.Network/publicIpAddresses', parameters('hub_publicIpAddressForBastion'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "IpConf",
+                        "properties": {
+                            "subnet": {
+                                "id": "[resourceId(parameters('resourceGroup'), 'Microsoft.Network/virtualNetworks/subnets', parameters('hubNetworkName'), parameters('hub_bastionSubnetName'))]"
+                            },
+                            "publicIPAddress": {
+                                "id": "[resourceId(parameters('resourceGroup'), 'Microsoft.Network/publicIpAddresses', parameters('hub_publicIpAddressForBastion'))]"
+                            }
+                        }
+                    }
+                ]
+            }
         },
         {
             "type": "Microsoft.Network/privateDnsZones",
             "apiVersion": "2020-01-01",
             "name": "[parameters('hub_privateDNSZoneName')]",
-            "properties":{},
+            "properties": {},
             "location": "global"
         },
         {
@@ -185,16 +264,25 @@
             "name": "[concat(parameters('hub_privateDNSZoneName'), '/', parameters('hub_privateDNSZoneName'), '-link')]",
             "location": "global",
             "dependsOn": [
-              "[resourceId('Microsoft.Network/privateDnsZones', parameters('hub_privateDNSZoneName'))]",
-              "[resourceId('Microsoft.Network/virtualNetworks', parameters('hubNetworkName'))]"
+                "[resourceId('Microsoft.Network/privateDnsZones', parameters('hub_privateDNSZoneName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('hubNetworkName'))]"
             ],
             "properties": {
-              "registrationEnabled": "[parameters('hub_vmRegistration')]",
-              "virtualNetwork": {
-                "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('hubNetworkName'))]"
-              }
+                "registrationEnabled": "[parameters('hub_vmRegistration')]",
+                "virtualNetwork": {
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('hubNetworkName'))]"
+                }
             }
-        },
+        },   
+        {
+            "name": "[parameters('spoke_DNS_NSGName')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2019-02-01",
+            "location": "[parameters('location')]",
+            "properties": {
+                "securityRules": "[parameters('spoke_DNS_NSGRules')]"
+            }
+        },     
         {
             "name": "[parameters('spokeNetworkName')]",
             "type": "Microsoft.Network/virtualNetworks",
@@ -212,9 +300,12 @@
                 },
                 "subnets": [
                     {
-                        "name": "[parameters('spoke_subnet0_name')]",
+                        "name": "[parameters('spoke_subnet0_name')]",                      
                         "properties": {
-                            "addressPrefix": "[parameters('spoke_subnet0_addressRange')]"
+                            "addressPrefix": "[parameters('spoke_subnet0_addressRange')]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('spoke_DNS_NSGName'))]"
+                            }
                         }
                     },
                     {
@@ -286,11 +377,11 @@
                 ]
             }
         },
-        {
+       {
             "type": "Microsoft.Network/privateDnsZones",
             "apiVersion": "2020-01-01",
             "name": "[parameters('spoke_privateDnsZoneName')]",
-            "properties":{},
+            "properties": {},
             "location": "global"
         },
         {
@@ -299,14 +390,14 @@
             "name": "[concat(parameters('spoke_privateDnsZoneName'), '/', parameters('spoke_privateDnsZoneName'), '-link')]",
             "location": "global",
             "dependsOn": [
-              "[resourceId('Microsoft.Network/privateDnsZones', parameters('spoke_privateDnsZoneName'))]",
-              "[resourceId('Microsoft.Network/virtualNetworks', parameters('spokeNetworkName'))]"
+                "[resourceId('Microsoft.Network/privateDnsZones', parameters('spoke_privateDnsZoneName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('spokeNetworkName'))]"
             ],
             "properties": {
-              "registrationEnabled": "[parameters('spoke_vmRegistration')]",
-              "virtualNetwork": {
-                "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('spokeNetworkName'))]"
-              }
+                "registrationEnabled": "[parameters('spoke_vmRegistration')]",
+                "virtualNetwork": {
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('spokeNetworkName'))]"
+                }
             }
         }
     ]
