@@ -17,7 +17,7 @@
         },
         "virtualNetworkId": {
             "type": "string",
-            "defaultValue": "[concat(resourcegroup().id,'/providers/Microsoft.Network/virtualNetworks/hub-vnet']"
+            "defaultValue": "[concat(resourcegroup().id,'/providers/Microsoft.Network/virtualNetworks/hub-vnet')]"
         },
         "virtualMachineName": {
             "type": "string"
