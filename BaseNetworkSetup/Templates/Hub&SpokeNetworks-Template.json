@@ -27,6 +27,12 @@
         "hub_subnet1_addressRange": {
             "type": "string"
         },
+        "hub_subnet3_name":{
+            "type":"string"
+        },
+        "hub_subnet3_addressRange":{
+            "type":"string"
+        },
         "hub_ddosProtectionPlanEnabled": {
             "type": "bool"
         },
@@ -186,6 +192,20 @@
                         "name": "[parameters('hub_bastionSubnetName')]",
                         "properties": {
                             "addressPrefix": "[parameters('hub_bastionSubnetAddressSpace')]"
+                        }
+                    },
+                    {
+                        "name": "[parameters('hub_subnet3_name')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('hub_subnet3_addressRange')]",
+                            "delegations": [
+                                {
+                                    "name": "delegation",
+                                    "properties": {
+                                        "serviceName": "Microsoft.Web/serverFarms"
+                                    }
+                                }
+                            ]                           
                         }
                     }
                 ],

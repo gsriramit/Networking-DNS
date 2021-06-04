@@ -28,6 +28,12 @@
         "hub_subnet1_addressRange": {
             "value": "10.0.5.0/24"
         },
+        "hub_subnet3_name": {
+            "value": "ServiceIntegrationSubnet"
+        },
+        "hub_subnet3_addressRange": {
+            "value": "10.0.4.0/26"
+        },
         "hub_ddosProtectionPlanEnabled": {
             "value": false
         },

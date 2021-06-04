@@ -1,0 +1,194 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appServicePlanName": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "sku": {
+            "type": "string"
+        },
+        "skuCode": {
+            "type": "string"
+        },
+        "workerSize": {
+            "type": "string"
+        },
+        "workerSizeId": {
+            "type": "string"
+        },
+        "numberOfWorkers": {
+            "type": "string"
+        },
+        "sites_app_vnetintegrationtest_name": {
+            "defaultValue": "app-vnetintegrationtest",
+            "type": "string"
+        },
+        "serverfarms_asp_dnstestapps_externalid": {
+            "defaultValue": "[concat(resourcegroup().id, 'providers/Microsoft.Web/serverfarms/asp-dnstestapps')]",
+            "type": "string"
+        },
+        "virtualNetworks_hub_vnet_externalid": {
+            "defaultValue": "[concat(resourcegroup().id, '/providers/Microsoft.Network/virtualNetworks/hub-vnet')]",
+            "type": "string"
+        },
+        "hostVnetName":{
+            "type": "string",
+            "defaultValue": "hub-vnet"
+        },
+        "hostSubnetName":{
+            "type": "string",
+            "defaultValue": "ServiceIntegrationSubnet"
+        },
+        "storageAccountType": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "allowedValues": [
+              "Standard_LRS",
+              "Standard_GRS",
+              "Standard_RAGRS"
+            ],
+            "metadata": {
+              "description": "Storage Account type"
+            }
+          },
+          "use32BitWorkerProcess": {
+              "type": "bool",
+            "defaultValue": true
+        },
+        "powerShellVersion": {
+            "type": "string",
+            "defaultValue": "~7"
+        },
+        "alwaysOn": {
+            "type": "bool",
+            "defaultValue": true
+        }
+    },
+    "variables": {     
+        "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'fnsnetinteg')]"
+      },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-06-01",
+            "name": "[variables('storageAccountName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+              "name": "[parameters('storageAccountType')]"
+            },
+            "kind": "Storage"
+        },
+        {
+            "apiVersion": "2018-11-01",
+            "name": "[parameters('appServicePlanName')]",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[parameters('location')]",
+            "kind": "",
+            "properties": {
+                "name": "[parameters('appServicePlanName')]",
+                "workerSize": "[parameters('workerSize')]",
+                "workerSizeId": "[parameters('workerSizeId')]",
+                "numberOfWorkers": "[parameters('numberOfWorkers')]",
+                "reserved": false
+            },
+            "sku": {
+                "Tier": "[parameters('sku')]",
+                "Name": "[parameters('skuCode')]"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2018-11-01",
+            "name": "[parameters('sites_app_vnetintegrationtest_name')]",
+            "location": "Central India",
+            "tags": {
+                "CostCenter": "dev"
+            },
+            "kind": "functionapp",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverFarms', parameters('appServicePlanName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+            ],
+            "properties": {
+                "enabled": true,
+                "serverFarmId": "[resourceId('Microsoft.Web/serverFarms', parameters('appServicePlanName'))]",
+                "siteConfig": {
+                    "numberOfWorkers": 1,                  
+                    "http20Enabled": false,
+                    "use32BitWorkerProcess": "[parameters('use32BitWorkerProcess')]",
+                    "alwaysOn": "[parameters('alwaysOn')]",
+                    "powerShellVersion": "[parameters('powerShellVersion')]",
+                    "appSettings": [
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "~3"
+                        },
+                        {
+                            "name": "FUNCTIONS_WORKER_RUNTIME",
+                            "value": "powershell"
+                        },
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-06-01').keys[0].value)]"
+                        }
+                    ]
+                },
+                "hostNameSslStates": [
+                    {
+                        "name": "[concat(parameters('sites_app_vnetintegrationtest_name'), '.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "hostType": "Standard"
+                    },
+                    {
+                        "name": "[concat(parameters('sites_app_vnetintegrationtest_name'), '.scm.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "hostType": "Repository"
+                    }
+                ],              
+                "reserved": false,
+                "isXenon": false,
+                "hyperV": false,              
+                "scmSiteAlsoStopped": false,
+                "clientAffinityEnabled": false,
+                "clientCertEnabled": false,
+                "hostNamesDisabled": false,
+                "containerSize": 1536,
+                "dailyMemoryTimeQuota": 0,
+                "httpsOnly": false,
+                "redundancyMode": "None"
+            },
+            "resources": [
+                {
+                    "name": "virtualNetwork",
+                    "type": "networkConfig",
+                    "apiVersion": "2019-08-01",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Web/sites', parameters('sites_app_vnetintegrationtest_name'))]"
+                    ],
+                    "properties": {
+                        "subnetResourceId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('hostVnetName'), parameters('hostSubnetName'))]",
+                        "swiftSupported": true
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/hostNameBindings",
+            "apiVersion": "2018-11-01",
+            "name": "[concat(parameters('sites_app_vnetintegrationtest_name'), '/', parameters('sites_app_vnetintegrationtest_name'), '.azurewebsites.net')]",
+            "location": "Central India",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_app_vnetintegrationtest_name'))]"
+            ],
+            "properties": {
+                "siteName": "app-vnetintegrationtest",
+                "hostNameType": "Verified"
+            }
+        }
+
+    ]
+}

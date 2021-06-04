@@ -1,0 +1,36 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appServicePlanName": {
+            "value": "asp-dnstestapps"
+        },
+        "location": {
+            "value": "Central India"
+        },
+        "numberOfWorkers": {
+            "value": "1"
+        },
+        "sku": {
+            "value": "Standard"
+        },
+        "skuCode": {
+            "value": "S1"
+        },
+        "workerSize": {
+            "value": "0"
+        },
+        "workerSizeId": {
+            "value": "0"
+        },
+        "sites_app_vnetintegrationtest_name": {
+            "value": null
+        },
+        "serverfarms_asp_dnstestapps_externalid": {
+            "value": null
+        },
+        "virtualNetworks_hub_vnet_externalid": {
+            "value": null
+        }
+    }
+}

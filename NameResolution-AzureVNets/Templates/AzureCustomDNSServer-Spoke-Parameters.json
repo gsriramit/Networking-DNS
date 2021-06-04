@@ -6,25 +6,22 @@
             "value": "centralindia"
         },
         "networkInterfaceName": {
-            "value": "vm-customdns-dev-001713"
+            "value": "vm-customdns-dev-001715"
         },
         "networkSecurityGroupId": {
-            "value": null
+            "value": "[concat(resourcegroup().id,'/providers/Microsoft.Network/networkSecurityGroups/spoke_nsg_dns')]"
         },
         "subnetName": {
-            "value": "MgmtSubnet"
+            "value": "workloadsubnet"
         },
         "virtualNetworkId": {
-            "value": null
+            "value": "[concat(resourcegroup().id,'/providers/Microsoft.Network/virtualNetworks/spoke-vnet')]"
         },
         "virtualMachineName": {
-            "value": "vm-customdns-dev-001"
+            "value": "vm-customdns-dev-002"
         },
         "virtualMachineComputerName": {
             "value": "vm-customdns-de"
-        },
-        "virtualMachineRG": {
-            "value": "Az360-SharedSvcs-rg"
         },
         "osDiskType": {
             "value": "StandardSSD_LRS"
@@ -43,12 +40,6 @@
         },
         "enableHotpatching": {
             "value": false
-        }, 
-        "forwardDomainName":{
-            "value":"az-spoke1-internal.net"
-        },
-        "forwardServerIp":{
-            "value": "10.1.0.4"
         },
         "autoShutdownStatus": {
             "value": "Enabled"
@@ -67,6 +58,12 @@
         },
         "autoShutdownNotificationEmail": {
             "value": ""
+        },
+        "forwardDomainName": {
+            "value": "az-hubinternal.net"
+        },
+        "forwardServerIp": {
+            "value": "10.0.5.4"
         }
     }
 }
