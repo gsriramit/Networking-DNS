@@ -4,7 +4,8 @@ This repository hosts the templates and scripts that deploy Azure Cloud Services
 ## References
 1. [Name Resolutions for VMs & Cloud Services](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-networks-name-resolution-for-vms-and-role-instances)
 2. [Private DNS Scenarios](https://docs.microsoft.com/en-us/azure/dns/private-dns-scenarios)
-3. [Azure PrivateEndPoint DNS Configuration Scenarios](https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns#dns-configuration-scenarios)
+3. [App Service Regional & Global VNET Integration](https://docs.microsoft.com/en-us/azure/app-service/web-sites-integrate-with-vnet#how-regional-vnet-integration-works)
+4. [Azure PrivateEndPoint DNS Configuration Scenarios](https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns#dns-configuration-scenarios)
 
 
 ## Name Resoltion Scenarios - Hybrid Network & Private DNS Zones
