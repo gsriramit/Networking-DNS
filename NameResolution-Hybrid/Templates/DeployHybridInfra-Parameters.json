@@ -1,0 +1,50 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "centralindia"
+        },
+        "vpnGatewayName": {
+            "value": "vngw-s2s-dev01"
+        },
+        "sku": {
+            "value": "VpnGw1"
+        },
+        "gatewayType": {
+            "value": "Vpn"
+        },
+        "vpnType": {
+            "value": "RouteBased"
+        },
+        "vpnGatewayGeneration": {
+            "value": "Generation1"
+        },
+        "newPublicIpAddressName": {
+            "value": "pip-vgw-dev"
+        },
+        "enableBgp": {
+            "value": true
+        },
+        "asn": {
+            "value": 65515
+        },
+        "localNetworkGatewayName": {
+            "value": "lgw-dev001"
+        },
+        "addressPrefixes": {
+            "value": [
+                "192.168.29.0/24"
+            ]
+        },
+        "localGatewayIpAddress": {
+            "value": ""
+        },
+        "connectionName":{
+            "value": "s2sHybridConnection"
+        },
+        "sharedKey":{
+            "value": null
+        }
+    }
+}
