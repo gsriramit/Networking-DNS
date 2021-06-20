@@ -1,3 +1,6 @@
+# Step 4: DNS resolution between Azure VNETS and a connected On-Premise Network
+### Note: The connection can be an IKE VPN or an express route. The DNS queries are directed to a DNS proxy server to its private IP address. This setup helps in preparing DNS solutions for production-kind network requirements
+
 ## Target State
 
 | Scenario  | Solution | DNS Suffix |
