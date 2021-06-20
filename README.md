@@ -8,7 +8,7 @@ This repository hosts the templates and scripts that deploy Azure Cloud Services
 4. [Azure PrivateEndPoint DNS Configuration Scenarios](https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns#dns-configuration-scenarios)
 
 
-## Name Resoltion Scenarios - Hybrid Network & Private DNS Zones
+## Name Resolution Scenarios - Hybrid Network & Private DNS Zones
 
 | Scenario  | Solution | DNS Suffix |
 | ------------- | ------------- |-------------|
