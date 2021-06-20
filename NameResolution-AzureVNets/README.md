@@ -1,3 +1,5 @@
+# Step 2: Simple DNS Resolution between Peered Azure VNETS
+
 ## Target State
 
 | Scenario  | Solution | DNS Suffix |
