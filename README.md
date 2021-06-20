@@ -8,7 +8,7 @@ This repository hosts the templates and scripts that deploy Azure Cloud Services
 4. [Azure PrivateEndPoint DNS Configuration Scenarios](https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns#dns-configuration-scenarios)
 
 
-## Name Resoltion Scenarios - Hybrid Network & Private DNS Zones
+## Name Resolution Scenarios - Hybrid Network & Private DNS Zones
 
 | Scenario  | Solution | DNS Suffix |
 | ------------- | ------------- |-------------|
@@ -26,6 +26,22 @@ This repository hosts the templates and scripts that deploy Azure Cloud Services
 
 ## Name Resolution- Flow Diagram
 ![AzureVPNConcepts - DNS Scenarios-NameResolveFlows](https://user-images.githubusercontent.com/13979783/120890848-e6e6b880-c622-11eb-8c39-936e5796ffce.png)
+
+### Flows Explained
+- 1.1 to 1.3 - Name resolution of private DNS Zone names of VMs within a private network 
+  - Uses the Custom DNS Server of the Virtual Network
+  - e.g name resolution of vm-dns-dev01.az-hubinternal.net from vm-dns-dev02.az-hubinternal.net
+- 2.1 to 2.4 - Name resolution of private DNS Zone names of VMs in a peered Virtual Network
+  - Uses the Custom DNS Server of source VNET and the peered VNET
+  - e.g. name resolution of vm-dns-dev01.az-spoke1-internal.net from vm-dns-dns-dev02.az-hubinternal.net
+- 3.1 to 3.3 - Name resolution of a FQDN of a VM hosted in a VNET that an App-Service or a Function-App is integrated with (regional integration)
+  - Uses the Custom DNS Server of the VNET that the function app is integrated with
+  - e.g name resolution of vm-dns-dev02.az-hubinternal.net from a powershell script running in the Function App
+  - Note: The name resolution of vm-dns-dev02.az-spoke1-internal.net should also work from the app
+- 4.1 to 4.4 - Name resolution of a FQDN of VMs hosted in the Hub Vnet and the directly peered Spoke VNet 
+  - Uses the Custom DNS Server in the Hub VNet
+  - e.g name resolution of vm-dns-dev02.az-hubinternal.net from an On-prem VM with the FQDN of vm-dc-primary.azhybrid.internal & the other way around
+  - Note: This should work both the ways if the resolution of Network Resources in the On-Prem network from Azure is also needed. This can be made possible by configuring the On-Prem Domain based conditional forwarding in the Hub Vnet's Custom DNS Server
 
 
 
