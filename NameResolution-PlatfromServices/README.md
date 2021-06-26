@@ -1,3 +1,5 @@
+# Step 3: DNS Resolution of VMs and Cloud Services' FQDN from applicable PAAS services regionally integrated with a VNET
+
 ## Target State
 
 | Scenario  | Solution | DNS Suffix |
