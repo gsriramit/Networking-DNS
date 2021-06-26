@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "centralus"
+        },
+        "loadBalancerName": {
+            "value": "ilb-dns-dev-01"
+        },
+        "sku": {
+            "value": "Standard"
+        },
+        "tier": {
+            "value": "Regional"
+        },
+        "subnetId": {
+            "value": null
+        },
+        "privateIPAllocationMethod": {
+            "value": "Static"
+        },
+        "privateIPAddress": {
+            "value": "10.0.5.25"
+        },
+        "privateIPAddressVersion": {
+            "value": "IPv4"
+        }
+    }
+}

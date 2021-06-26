@@ -1,0 +1,99 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "loadBalancerName": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "sku": {
+            "type": "string"
+        },
+        "tier": {
+            "type": "string"
+        },
+        "subnetId": {
+            "type": "string" ,
+            "defaultValue": "[concat(resourcegroup().id,'/providers/Microsoft.Network/virtualNetworks/hub-vnet/subnets/MgmtSubnet')] " 
+        },
+        "privateIPAllocationMethod": {
+            "type": "string"
+        },
+        "privateIPAddress": {
+            "type": "string"
+        },
+        "privateIPAddressVersion": {
+            "type": "string"
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2020-07-01",
+            "name": "[parameters('loadBalancerName')]",
+            "type": "Microsoft.Network/loadBalancers",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "[parameters('sku')]",
+                "tier": "[parameters('tier')]"
+            },
+            "dependsOn": [],
+            "tags": {
+                "CostCenter": "dev",
+                "DNSStesting": "Load Balancer"
+            },
+            "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "name": "LoadBalancerFrontEnd",
+                        "properties": {
+                            "privateIPAllocationMethod": "[parameters('privateIPAllocationMethod')]",
+                            "subnet": {
+                                "id": "[parameters('subnetId')]"
+                            },
+                            "privateIPAddress": "[parameters('privateIPAddress')]",
+                            "privateIPAddressVersion": "[parameters('privateIPAddressVersion')]"
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                      "name": "BackendPool1"
+                    }
+                  ],
+                  "loadBalancingRules": [
+                    {
+                      "properties": {
+                        "frontendIPConfiguration": {
+                          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancerName')), '/frontendIpConfigurations/LoadBalancerFrontend')]"
+                        },
+                        "backendAddressPool": {
+                          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancerName')), '/backendAddressPools/BackendPool1')]"
+                        },
+                        "probe": {
+                          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancerName')), '/probes/lbprobe')]"
+                        },
+                        "protocol": "Udp",
+                        "frontendPort": 53,
+                        "backendPort": 53,
+                        "idleTimeoutInMinutes": 15
+                      },
+                      "Name": "lbrule"
+                    }
+                  ],
+                  "probes": [
+                    {
+                      "properties": {
+                        "protocol": "Tcp",
+                        "port": 53,
+                        "intervalInSeconds": 15,
+                        "numberOfProbes": 2
+                      },
+                      "name": "lbprobe"
+                    }
+                  ]
+            }
+        }
+    ]
+}
