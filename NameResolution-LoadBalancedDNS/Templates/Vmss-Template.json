@@ -9,31 +9,35 @@
             "type": "string"
         },
         "virtualNetworkId": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "[concat(resourcegroup().id,'/providers/Microsoft.Network/virtualNetworks/hub-vnet')]"
         },
         "virtualNetworkName": {
             "type": "string"
         },
-        "networkSecurityGroups": {
-            "type": "array"
+        "backendPoolId": {
+            "type": "string",
+            "defaultValue": "[concat(resourcegroup().id,'/providers/Microsoft.Network/loadBalancers/lb-dns-dev01/backendAddressPools/BackendPool1')]"
         },
         "networkInterfaceConfigurations": {
-            "type": "array"
-        },
-        "publicIpAddressName": {
-            "type": "string"
-        },
-        "backendPoolName": {
-            "type": "string"
-        },
-        "backendPoolId": {
-            "type": "string"
-        },
-        "loadBalancerName": {
-            "type": "string"
-        },
-        "inboundNatPoolId": {
-            "type": "string"
+            "type": "array",
+            "defaultValue": [
+                {
+                    "name": "vm-dns-nic01",
+                    "primary": true,
+                    "subnetId": "[concat(resourcegroup().id,'/providers/Microsoft.Network/virtualNetworks/hub-vnet/subnets/MgmtSubnet')]",
+                    "applicationGatewayBackendAddressPools": [],
+                    "loadBalancerBackendAddressPools": [
+                        {
+                            "id": "[concat(resourcegroup().id,'/providers/Microsoft.Network/loadBalancers/lb-dns-dev01/backendAddressPools/BackendPool1')]"
+                        }
+                    ],
+                    "applicationSecurityGroups": [],
+                    "loadBalancerInboundNatPools": [],
+                    "enableAcceleratedNetworking": false,                    
+                    "pipName": ""
+                }
+            ]
         },
         "vmName": {
             "type": "string"
@@ -83,138 +87,16 @@
     },
     "variables": {
         "storageApiVersion": "2019-04-01",
-        "loadBalancerId": "[resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancerName'))]",
-        "backendPoolId": "[concat(variables('loadBalancerId'), '/backendAddressPools/', parameters('backendPoolName'))]",
         "virtualMachineScaleSetApiVersion": "2021-03-01",
         "namingInfix": "[toLower(substring(concat(parameters('virtualMachineScaleSetName'), uniqueString(resourceGroup().id)), 0, 9))]"
     },
     "resources": [
-        {
-            "name": "[parameters('networkSecurityGroups')[copyIndex()].name]",
-            "type": "Microsoft.Network/networkSecurityGroups",
-            "apiVersion": "2019-02-01",
-            "location": "[parameters('location')]",
-            "properties": {
-                "securityRules": "[parameters('networkSecurityGroups')[copyIndex()].rules]"
-            },
-            "copy": {
-                "name": "networkSecurityGroups",
-                "count": "[length(parameters('networkSecurityGroups'))]"
-            },
-            "tags": {
-                "CostCenter": "dev",
-                "DNSStesting": "vmss"
-            }
-        },
-        {
-            "type": "Microsoft.Network/publicIPAddresses",
-            "name": "[parameters('publicIpAddressName')]",
-            "location": "[parameters('location')]",
-            "apiVersion": "2019-02-01",
-            "sku": {
-                "name": "Standard"
-            },
-            "properties": {
-                "publicIPAllocationMethod": "Static"
-            },
-            "tags": {
-                "CostCenter": "dev",
-                "DNSStesting": "vmss"
-            }
-        },
-        {
-            "type": "Microsoft.Network/loadBalancers",
-            "name": "[parameters('loadBalancerName')]",
-            "location": "[parameters('location')]",
-            "apiVersion": "2019-02-01",
-            "dependsOn": [
-                "[concat('Microsoft.Network/publicIPAddresses/', parameters('publicIpAddressName'))]"
-            ],
-            "sku": {
-                "name": "Standard"
-            },
-            "properties": {
-                "frontendIPConfigurations": [
-                    {
-                        "name": "LoadBalancerFrontEnd",
-                        "id": "[concat(variables('loadBalancerId'), '/frontendIPConfigurations/loadBalancerFrontEnd')]",
-                        "properties": {
-                            "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]"
-                            }
-                        }
-                    }
-                ],
-                "backendAddressPools": [
-                    {
-                        "id": "[variables('backendPoolId')]",
-                        "name": "[parameters('backendPoolName')]"
-                    }
-                ],
-                "inboundNatPools": [
-                    {
-                        "name": "natpool",
-                        "id": "[parameters('inboundNatPoolId')]",
-                        "properties": {
-                            "frontendIPConfiguration": {
-                                "id": "[concat(variables('loadBalancerId'), '/frontendIPConfigurations/loadBalancerFrontEnd')]"
-                            },
-                            "protocol": "tcp",
-                            "frontendPortRangeStart": "50000",
-                            "frontendPortRangeEnd": "50119",
-                            "backendPort": "3389"
-                        }
-                    }
-                ],
-                "probes": [
-                    {
-                        "name": "tcpProbe",
-                        "properties": {
-                            "protocol": "tcp",
-                            "port": 80,
-                            "intervalInSeconds": 5,
-                            "numberOfProbes": 2,
-                            "loadBalancingRules": []
-                        }
-                    }
-                ],
-                "loadBalancingRules": [
-                    {
-                        "name": "LBRule",
-                        "properties": {
-                            "frontendIPConfiguration": {
-                                "id": "[concat(variables('loadBalancerId'), '/frontendIPConfigurations/loadBalancerFrontEnd')]"
-                            },
-                            "backendAddressPool": {
-                                "id": "[variables('backendPoolId')]"
-                            },
-                            "protocol": "tcp",
-                            "frontendPort": 80,
-                            "backendPort": 80,
-                            "enableFloatingIP": false,
-                            "idleTimeoutInMinutes": 5,
-                            "loadDistribution": "Default",
-                            "probe": {
-                                "id": "[concat(variables('loadBalancerId'),'/probes/tcpProbe')]"
-                            }
-                        }
-                    }
-                ]
-            },
-            "tags": {
-                "CostCenter": "dev",
-                "DNSStesting": "vmss"
-            }
-        },
-        {
+       {
             "name": "[parameters('virtualMachineScaleSetName')]",
             "type": "Microsoft.Compute/virtualMachineScaleSets",
             "apiVersion": "[variables('virtualMachineScaleSetApiVersion')]",
             "location": "[parameters('location')]",
-            "dependsOn": [
-                "networkSecurityGroups",
-                "[variables('loadBalancerId')]"
-            ],
+            "dependsOn": [],
             "properties": {
                 "singlePlacementGroup": "[parameters('singlePlacementGroup')]",
                 "virtualMachineProfile": {
@@ -257,8 +139,7 @@
                                                     "publicIPAddressConfiguration": "[if( equals( parameters('networkInterfaceConfigurations')[copyIndex('networkInterfaceConfigurations')].pipName, ''), json('null'), union(json(concat('{\"name\": \"', parameters('networkInterfaceConfigurations')[copyIndex('networkInterfaceConfigurations')].pipName, '\"}'))\n                        ,json('{\"properties\": { \"idleTimeoutInMinutes\": 15}}')))]"
                                                 }
                                             }
-                                        ],
-                                        "networkSecurityGroup": "[if( equals( parameters('networkInterfaceConfigurations')[copyIndex('networkInterfaceConfigurations')].nsgId, ''), json('null'),json(concat('{\"id\": \"', parameters('networkInterfaceConfigurations')[copyIndex('networkInterfaceConfigurations')].nsgId, '\"}')))]"
+                                        ]
                                     }
                                 }
                             }
@@ -269,9 +150,9 @@
                             {
                                 "name": "DNS-Server-Install",
                                 "properties": {
-                                  "publisher": "Microsoft.Azure.Extensions",
-                                  "type": "CustomScript",
-                                  "typeHandlerVersion": "2.0",
+                                  "publisher": "Microsoft.Compute",
+                                  "type": "CustomScriptExtension",
+                                  "typeHandlerVersion": "1.8",
                                   "autoUpgradeMinorVersion": true,
                                   "settings": {
                                     "fileUris": [
@@ -313,7 +194,7 @@
             "zones": "[parameters('zone')]",
             "tags": {
                 "CostCenter": "dev",
-                "DNSStesting": "vmss"
+                "DNSStesting": "vmss-dns"
             }
         }
     ],

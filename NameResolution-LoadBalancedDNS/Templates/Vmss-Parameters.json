@@ -9,60 +9,14 @@
             "value": "Standard_LRS"
         },
         "virtualNetworkId": {
-            "value": "/subscriptions/83343ae6-3277-475f-8be1-946e5d6d9359/resourceGroups/Az360-SharedSvcs-rg/providers/Microsoft.Network/virtualNetworks/hub-vnet"
+            "value": null
         },
         "virtualNetworkName": {
             "value": "hub-vnet"
         },
-        "networkSecurityGroups": {
-            "value": [
-                {
-                    "name": "basicNsgvm-dns-nic01",
-                    "id": "/subscriptions/83343ae6-3277-475f-8be1-946e5d6d9359/resourceGroups/Az360-SharedSvcs-rg/providers/Microsoft.Network/networkSecurityGroups/basicNsgvm-dns-nic01",
-                    "rules": []
-                }
-            ]
-        },
-        "networkInterfaceConfigurations": {
-            "value": [
-                {
-                    "name": "vm-dns-nic01",
-                    "primary": true,
-                    "subnetId": "/subscriptions/83343ae6-3277-475f-8be1-946e5d6d9359/resourceGroups/Az360-SharedSvcs-rg/providers/Microsoft.Network/virtualNetworks/hub-vnet/subnets/MgmtSubnet",
-                    "applicationGatewayBackendAddressPools": [],
-                    "loadBalancerBackendAddressPools": [
-                        {
-                            "id": "[parameters('backendPoolId')]"
-                        }
-                    ],
-                    "applicationSecurityGroups": [],
-                    "loadBalancerInboundNatPools": [
-                        {
-                            "id": "[parameters('inboundNatPoolId')]"
-                        }
-                    ],
-                    "enableAcceleratedNetworking": false,
-                    "nsgName": "basicNsgvm-dns-nic01",
-                    "nsgId": "/subscriptions/83343ae6-3277-475f-8be1-946e5d6d9359/resourceGroups/Az360-SharedSvcs-rg/providers/Microsoft.Network/networkSecurityGroups/basicNsgvm-dns-nic01",
-                    "pipName": ""
-                }
-            ]
-        },
-        "publicIpAddressName": {
-            "value": "vmss-dns-dev01-ip"
-        },
-        "backendPoolName": {
-            "value": "bepool"
-        },
         "backendPoolId": {
-            "value": "/subscriptions/83343ae6-3277-475f-8be1-946e5d6d9359/resourceGroups/Az360-SharedSvcs-rg/providers/Microsoft.Network/loadBalancers/vmss-dns-dev01-lb/backendAddressPools/bepool"
-        },
-        "loadBalancerName": {
-            "value": "vmss-dns-dev01-lb"
-        },
-        "inboundNatPoolId": {
-            "value": "/subscriptions/83343ae6-3277-475f-8be1-946e5d6d9359/resourceGroups/Az360-SharedSvcs-rg/providers/Microsoft.Network/loadBalancers/vmss-dns-dev01-lb/inboundNatPools/natpool"
-        },
+            "value": null
+        },       
         "vmName": {
             "value": "vmss-dns-dev01"
         },
@@ -81,7 +35,7 @@
         "scaleInPolicy": {
             "value": {
                 "rules": [
-                    "OldestVM"
+                    "Default"
                 ]
             }
         },
@@ -114,7 +68,7 @@
             "value":"az-spoke1-internal.net"
         },
         "forwardServerIp":{
-            "value": "10.1.0.4"
+            "value": "10.1.0.25"
         }
     }
 }
