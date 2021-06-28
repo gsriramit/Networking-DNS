@@ -31,6 +31,15 @@ Modifying the deployment templates to place the DNS proxy servers in 2 to 3 AZs 
 7. Azure DNS forwards the request to the appropriate Private DNS Zone (az-hubinternal.net) in this case
 8. The Private DNS Zone having the "A" records for the registered VMs would be able to resolve the Domain Name to an IP
 
+## Important Note
+As the Scaleset instances are placed behind a standard load balancer, the machines would not have access to the Internet by default. This would make access to the GitHub User content to download and execute the script impossible.
+1. This has been discussed in this forum
+[VMs_behind_Standard_ILB](https://social.msdn.microsoft.com/Forums/en-US/36e69acc-070a-4f4f-b667-63efbd33a7e3/azure-vm-no-internet-access?forum=WAVirtualMachinesforWindows)
+2. Azure provides around 4 options to overcome this limitation
+[Reference](https://docs.microsoft.com/en-us/azure/load-balancer/load-balancer-outbound-connections#scenarios)
+3. Access to the internet is necessary because the DNS installation script is in the public GitHub Repo. If the script has been uploaded to an Azure Storage Account and *a Private-Endpoint has been created for the account in the Hub-vnet, the architecture would not need a NAT Gateway*
+
+
 
 
 
