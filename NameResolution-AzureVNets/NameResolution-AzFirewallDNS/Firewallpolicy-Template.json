@@ -1,0 +1,42 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string"
+        },
+        "resourceGroup": {
+            "type": "string"
+        },
+        "firewallPolicyName": {
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "apiVersion": "2020-11-01",
+            "type": "Microsoft.Network/firewallPolicies",
+            "name": "[parameters('firewallPolicyName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "properties": {
+                "sku": {
+                    "tier": "Standard"
+                },
+                "dnsSettings": {
+                    "enableProxy": true
+                },
+                "threatIntelWhitelist": {
+                    "fqdns": [],
+                    "ipAddresses": []
+                }
+            },
+            "resources": [],
+            "tags": {
+                "CostCenter": "dev",
+                "DNSStesting": "firewall"
+            }
+        }
+    ]
+}
