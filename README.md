@@ -54,6 +54,11 @@ This repository hosts the templates and scripts that deploy Azure Cloud Services
 5. [Azure Firewall DNS Proxy](https://azure.microsoft.com/en-us/blog/new-enhanced-dns-features-in-azure-firewall-now-generally-available/)
 
 
+## Known Issues
+1. The Custom Script Extention in the VM deployment to configure a forwarder with 168.63.129.16 for the private DNS Zone fails. This has to be done manually after the VM deployment is completed.
+
+## Important Note
+The ARM Templates and Scripts should not be used in production directly. Modify and improve as seen necessary!
 
 
 
