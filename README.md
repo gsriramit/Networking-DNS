@@ -1,5 +1,10 @@
 # Azure Networking - DNS Scenarios
-This repository hosts the templates and scripts that deploy Azure Cloud Services for a variety of Azure DNS scenarios. The deployments would be done in multiple steps to be able to create and simulate multiple independent scenarios while keeping the base infrastructure components reusable. The following table lists the scenarios that we will be targeting
+This repository hosts the templates and scripts that deploy Azure Cloud Services for a variety of Azure DNS scenarios. The deployments would be done in multiple steps to be able to create and simulate multiple independent scenarios while keeping the base infrastructure components reusable. 
+![AzureVPNConcepts - Page 7](https://user-images.githubusercontent.com/13979783/124377335-15f75500-dcc9-11eb-9500-ca9ec0559697.png)
+
+
+
+The following table lists the scenarios that we will be targeting
 
 
 ## Name Resolution Scenarios - Hybrid Network & Private DNS Zones
