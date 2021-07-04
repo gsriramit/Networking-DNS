@@ -63,7 +63,8 @@ The following table lists the scenarios that we will be targeting
 1. The Custom Script Extention in the VM deployment to configure a forwarder with 168.63.129.16 for the private DNS Zone fails. This has to be done manually after the VM deployment is completed.
 
 ## Important Note
-The ARM Templates and Scripts should not be used in production directly. Modify and improve as seen necessary!
+1. The ARM Templates and Scripts should not be used in production directly. Modify and improve as seen necessary!
+2. Architectue Diagrams for Steps 5 and 6 are added to the readme files inside the respective folders
 
 
 
