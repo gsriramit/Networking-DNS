@@ -1,12 +1,6 @@
 # Azure Networking - DNS Scenarios
 This repository hosts the templates and scripts that deploy Azure Cloud Services for a variety of Azure DNS scenarios. The deployments would be done in multiple steps to be able to create and simulate multiple independent scenarios while keeping the base infrastructure components reusable. The following table lists the scenarios that we will be targeting
 
-## References
-1. [Name Resolutions for VMs & Cloud Services](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-networks-name-resolution-for-vms-and-role-instances)
-2. [Private DNS Scenarios](https://docs.microsoft.com/en-us/azure/dns/private-dns-scenarios)
-3. [App Service Regional & Global VNET Integration](https://docs.microsoft.com/en-us/azure/app-service/web-sites-integrate-with-vnet#how-regional-vnet-integration-works)
-4. [Azure PrivateEndPoint DNS Configuration Scenarios](https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns#dns-configuration-scenarios)
-
 
 ## Name Resolution Scenarios - Hybrid Network & Private DNS Zones
 
@@ -19,6 +13,14 @@ This repository hosts the templates and scripts that deploy Azure Cloud Services
 |Name resolution from App Service Web Apps in one virtual network to VMs in a different virtual network.|Customer-managed DNS servers forwarding queries between virtual networks for resolution by Azure (DNS proxy). See Name resolution using your own DNS server.|FQDN only|
 |Resolution of on-premises computer and service names from VMs or role instances in Azure.|Customer-managed DNS servers (on-premises domain controller, local read-only domain controller, or a DNS secondary synced using zone transfers, for example). See Name resolution using your own DNS server.|FQDN only|
 |Resolution of Azure hostnames from on-premises computers.|Forward queries to a customer-managed DNS proxy server in the corresponding virtual network, the proxy server forwards queries to Azure for resolution. See Name resolution using your own DNS server.	|FQDN only|
+
+### Name Resolution Scenarios - Architecture Choices
+| Scenario  | Solution | DNS Suffix |
+| ------------- | ------------- |-------------|
+| All Scenarios involving Custom DNS Servers | Multiple DNS Servers load balanced by Std ILB  | FQDN
+| All Scenarios with Azure Provided DNS | Azure Firewall DNS Proxy  | FQDN
+| All Scenarios with Azure Provided DNS & Custom DNS Servers | Azure Firewall DNS Proxy with Custom DNS Servers | FQDN
+
 
 
 ## Network Architecture Diagram
@@ -44,7 +46,19 @@ This repository hosts the templates and scripts that deploy Azure Cloud Services
   - Note: This should work both the ways if the resolution of Network Resources in the On-Prem network from Azure is also needed. This can be made possible by configuring the On-Prem Domain based conditional forwarding in the Hub Vnet's Custom DNS Server
 
 
+## References
+1. [Name Resolutions for VMs & Cloud Services](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-networks-name-resolution-for-vms-and-role-instances)
+2. [Private DNS Scenarios](https://docs.microsoft.com/en-us/azure/dns/private-dns-scenarios)
+3. [App Service Regional & Global VNET Integration](https://docs.microsoft.com/en-us/azure/app-service/web-sites-integrate-with-vnet#how-regional-vnet-integration-works)
+4. [Azure PrivateEndPoint DNS Configuration Scenarios](https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns#dns-configuration-scenarios)
+5. [Azure Firewall DNS Proxy](https://azure.microsoft.com/en-us/blog/new-enhanced-dns-features-in-azure-firewall-now-generally-available/)
 
+
+## Known Issues
+1. The Custom Script Extention in the VM deployment to configure a forwarder with 168.63.129.16 for the private DNS Zone fails. This has to be done manually after the VM deployment is completed.
+
+## Important Note
+The ARM Templates and Scripts should not be used in production directly. Modify and improve as seen necessary!
 
 
 
