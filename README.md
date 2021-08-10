@@ -1,5 +1,10 @@
 # Azure Networking - DNS Scenarios
-This repository hosts the templates and scripts that deploy Azure Cloud Services for a variety of Azure DNS scenarios. The deployments would be done in multiple steps to be able to create and simulate multiple independent scenarios while keeping the base infrastructure components reusable. The following table lists the scenarios that we will be targeting
+This repository hosts the templates and scripts that deploy Azure Cloud Services for a variety of Azure DNS scenarios. The deployments would be done in multiple steps to be able to create and simulate multiple independent scenarios while keeping the base infrastructure components reusable. 
+![AzureVPNConcepts - Page 7](https://user-images.githubusercontent.com/13979783/124377335-15f75500-dcc9-11eb-9500-ca9ec0559697.png)
+
+
+
+The following table lists the scenarios that we will be targeting
 
 
 ## Name Resolution Scenarios - Hybrid Network & Private DNS Zones
@@ -58,7 +63,8 @@ This repository hosts the templates and scripts that deploy Azure Cloud Services
 1. The Custom Script Extention in the VM deployment to configure a forwarder with 168.63.129.16 for the private DNS Zone fails. This has to be done manually after the VM deployment is completed.
 
 ## Important Note
-The ARM Templates and Scripts should not be used in production directly. Modify and improve as seen necessary!
+1. The ARM Templates and Scripts should not be used in production directly. Modify and improve as seen necessary!
+2. Architectue Diagrams for Steps 5 and 6 are added to the readme files inside the respective folders
 
 
 
